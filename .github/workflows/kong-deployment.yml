@@ -44,8 +44,8 @@ jobs:
 
       - name: Validate Kong Config
         run: |
-          echo "Validating kong.yaml..."
-          deck gateway validate kong.yaml
+          echo "Validating kong.yaml (offline)..."
+          deck file validate kong.yaml
 
       - name: Preview Changes (diff)
         run: |
