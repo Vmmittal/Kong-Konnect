@@ -39,8 +39,8 @@ jobs:
 
       - name: Generate Kong Config from OpenAPI
         run: |
-          echo "Converting OpenAPI to kong.yaml..."
-          inso generate config ./open-api.yaml -o kong.yaml
+          echo "Converting OpenAPI to kong.yaml using decK..."
+          deck file openapi2kong --spec ./open-api.yaml --output-file kong.yaml
 
       - name: Validate Kong Config
         run: |
