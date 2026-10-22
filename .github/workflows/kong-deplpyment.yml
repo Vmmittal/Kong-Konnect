@@ -5,25 +5,22 @@ on:
     branches:
       - main
     paths:
-      - 'open-api.yaml' # Triggers ONLY when an OpenAPI file changes
-      - '.github/workflows/kong-deployment.yml' # Or when the workflow itself changes
+      - 'open-api.yaml'
+      - '.github/workflows/kong-deployment.yml'
 
 jobs:
   deploy-to-konnect:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get the code from the repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (Required for Inso)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 3. Install inso (OpenAPI to Kong converter) and decK (Deployer)
       - name: Install inso and decK
         run: |
           echo "Installing Inso CLI..."
@@ -38,20 +35,16 @@ jobs:
           inso --version
           deck version
 
-      # 4. Convert the OpenAPI file to Kong YAML
       - name: Generate Kong Config from OpenAPI
         run: |
           echo "Converting OpenAPI to kong.yaml..."
-          # Note: Change the path below to match your actual OpenAPI file
           inso generate config ./open-api.yaml -o kong.yaml
 
-      # 5. Check for syntax errors
       - name: Validate Kong Config
         run: |
           echo "Validating kong.yaml..."
           deck gateway validate kong.yaml
 
-      # 6. Preview what will change in Konnect (Dry Run)
       - name: Preview Changes (diff)
         run: |
           echo "Comparing local kong.yaml to Konnect Cloud..."
@@ -59,7 +52,6 @@ jobs:
             --konnect-token "${{ secrets.KONNECT_TOKEN }}" \
             --konnect-control-plane-name "${{ secrets.KONNECT_CP_NAME }}"
 
-      # 7. Push the configuration to the Cloud
       - name: Deploy to Konnect (sync)
         run: |
           echo "Pushing configuration to Konnect..."
