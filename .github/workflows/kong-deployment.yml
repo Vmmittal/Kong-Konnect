@@ -36,6 +36,13 @@ jobs:
           echo "Converting OpenAPI to kong.yaml using decK..."
           deck file openapi2kong --spec ./open-api.yaml --output-file kong.yaml
 
+       # ADD THESE LINES BELOW:
+      - name: Upload Generated Kong Config
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-kong-config
+          path: kong.yaml    
+
       - name: Validate Kong Config
         run: |
           echo "Validating kong.yaml (offline)..."
