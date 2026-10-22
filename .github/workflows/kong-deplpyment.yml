@@ -1,0 +1,68 @@
+name: APIOps - Deploy OpenAPI to Kong Konnect
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'openapi-specs/**' # Triggers ONLY when an OpenAPI file changes
+      - '.github/workflows/kong-deploy.yml' # Or when the workflow itself changes
+
+jobs:
+  deploy-to-konnect:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Get the code from the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js (Required for Inso)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. Install inso (OpenAPI to Kong converter) and decK (Deployer)
+      - name: Install inso and decK
+        run: |
+          echo "Installing Inso CLI..."
+          npm install -g @kong/insomnia-inso
+          
+          echo "Downloading decK..."
+          curl -sL https://github.com/kong/deck/releases/download/v1.34.0/deck_1.34.0_linux_amd64.tar.gz -o deck.tar.gz
+          tar -zxvf deck.tar.gz deck
+          sudo mv deck /usr/local/bin/
+          
+          echo "Verifying installations:"
+          inso --version
+          deck version
+
+      # 4. Convert the OpenAPI file to Kong YAML
+      - name: Generate Kong Config from OpenAPI
+        run: |
+          echo "Converting OpenAPI to kong.yaml..."
+          # Note: Change the path below to match your actual OpenAPI file
+          inso generate config ./openapi-specs/client-api.yaml -o kong.yaml
+
+      # 5. Check for syntax errors
+      - name: Validate Kong Config
+        run: |
+          echo "Validating kong.yaml..."
+          deck gateway validate kong.yaml
+
+      # 6. Preview what will change in Konnect (Dry Run)
+      - name: Preview Changes (diff)
+        run: |
+          echo "Comparing local kong.yaml to Konnect Cloud..."
+          deck gateway diff kong.yaml \
+            --konnect-token "${{ secrets.KONNECT_TOKEN }}" \
+            --konnect-control-plane-name "${{ secrets.KONNECT_CP_NAME }}"
+
+      # 7. Push the configuration to the Cloud
+      - name: Deploy to Konnect (sync)
+        run: |
+          echo "Pushing configuration to Konnect..."
+          deck gateway sync kong.yaml \
+            --konnect-token "${{ secrets.KONNECT_TOKEN }}" \
+            --konnect-control-plane-name "${{ secrets.KONNECT_CP_NAME }}"
