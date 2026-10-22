@@ -29,7 +29,6 @@ jobs:
           sudo mv deck /usr/local/bin/
           
           echo "Verifying installations:"
-          inso --version
           deck version
 
       - name: Generate Kong Config from OpenAPI
