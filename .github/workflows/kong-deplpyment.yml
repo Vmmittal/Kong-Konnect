@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - '/open-api.yml' # Triggers ONLY when an OpenAPI file changes
-      - '.github/workflows/kong-deploy.yml' # Or when the workflow itself changes
+      - 'open-api.yaml' # Triggers ONLY when an OpenAPI file changes
+      - '.github/workflows/kong-deployment.yml' # Or when the workflow itself changes
 
 jobs:
   deploy-to-konnect:
@@ -43,7 +43,7 @@ jobs:
         run: |
           echo "Converting OpenAPI to kong.yaml..."
           # Note: Change the path below to match your actual OpenAPI file
-          inso generate config ./openapi-specs/client-api.yaml -o kong.yaml
+          inso generate config ./open-api.yaml -o kong.yaml
 
       # 5. Check for syntax errors
       - name: Validate Kong Config
