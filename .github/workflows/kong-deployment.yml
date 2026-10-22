@@ -21,11 +21,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install inso and decK
+      - name: Install inso
+        uses: kong/setup-inso@v2
+        with:
+          inso-version: 10.3.1  # Use a stable version
+
+      - name: Install decK
         run: |
-          echo "Installing Inso CLI..."
-          npm install -g insomnia-inso
-          
           echo "Downloading decK..."
           curl -sL https://github.com/kong/deck/releases/download/v1.34.0/deck_1.34.0_linux_amd64.tar.gz -o deck.tar.gz
           tar -zxvf deck.tar.gz deck
