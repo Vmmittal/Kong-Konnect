@@ -5,6 +5,8 @@ info:
   version: 1.0.0
 servers:
   - url: http://httpbin.konghq.com
+x-kong-route-defaults:
+  strip_path: false
 paths:
   /users:
     get:
