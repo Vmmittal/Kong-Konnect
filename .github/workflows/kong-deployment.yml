@@ -21,11 +21,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install inso
-        uses: kong/setup-inso@v2
-        with:
-          inso-version: 10.3.1  # Use a stable version
-
       - name: Install decK
         run: |
           echo "Downloading decK..."
