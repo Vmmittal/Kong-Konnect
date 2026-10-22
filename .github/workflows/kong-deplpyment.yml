@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'openapi-specs/**' # Triggers ONLY when an OpenAPI file changes
+      - '/open-api.yml' # Triggers ONLY when an OpenAPI file changes
       - '.github/workflows/kong-deploy.yml' # Or when the workflow itself changes
 
 jobs:
