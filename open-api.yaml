@@ -8,25 +8,14 @@ servers:
 x-kong-route-defaults:
   strip_path: false
 paths:
-  /users:
+  /anything:
     get:
-      summary: Get a list of users
-      operationId: getUsers
+      summary: Test GET request
       responses:
         '200':
-          description: A successful response
+          description: OK
     post:
-      summary: Create a new user
-      operationId: createUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
+      summary: Test POST request
       responses:
         '201':
-          description: User created successfully
+          description: Created
